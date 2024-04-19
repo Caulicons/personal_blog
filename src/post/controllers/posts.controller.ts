@@ -43,14 +43,19 @@ export class PostsController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async createPost(@Body() post: Posts): Promise<Posts> {
-    return this.postsService.create(post);
+  async createPost(
+    @Body()
+    post: Posts,
+  ): Promise<Posts> {
+    return await this.postsService.create(post);
   }
 
   @Put(':id')
   async updatePost(
-    @Body() post: Posts,
-    @Param('id') id: number,
+    @Body()
+    post: Posts,
+    @Param('id')
+    id: number,
   ): Promise<Posts> {
     return this.postsService.update(id, post);
   }
