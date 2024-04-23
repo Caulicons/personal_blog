@@ -7,7 +7,6 @@ import {
   HttpException,
   HttpStatus,
   Param,
-  ParseIntPipe,
   Post,
   Put,
 } from '@nestjs/common';

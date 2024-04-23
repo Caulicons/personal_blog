@@ -2,7 +2,6 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { ILike, Repository } from 'typeorm';
 import { Theme } from '../entities/theme.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Posts } from 'src/post/entities/posts.entity';
 
 @Injectable()
 export class ThemesService {
