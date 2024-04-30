@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Posts } from '../entities/posts.entity';
 import { ILike, Repository } from 'typeorm';
 import { ThemesService } from '../../themes/services/themes.service';
+import { User } from '../../user/entities/user.entity';
 @Injectable()
 export class PostsService {
   constructor(
@@ -55,9 +56,7 @@ export class PostsService {
   }
 
   async create(post: Posts): Promise<Posts> {
-    console.log('pass1');
     const themeExists = await this.themesService.findById(post.theme.id);
-    console.log('passdfasfsadf sad');
     if (!themeExists)
       throw new HttpException('Theme not found', HttpStatus.NOT_FOUND);
 
@@ -65,23 +64,46 @@ export class PostsService {
   }
 
   async update(id: number, post: Posts): Promise<Posts> {
+    //Check if the post exist
     const postExist = await this.findOne(id);
     if (!postExist)
       throw new HttpException('Post not found', HttpStatus.NOT_FOUND);
 
+    // Check if the theme passed exist
     if (post.theme?.id) {
       const themeExists = await this.themesService.findById(post.theme.id);
       if (!themeExists)
         throw new HttpException('Theme not found', HttpStatus.NOT_FOUND);
     }
 
+    // Verify if the user post is equal
+    if (postExist.user.id !== post.user.id)
+      throw new HttpException(
+        'You are not allowed to edit this post because you is not the owner.',
+        HttpStatus.FORBIDDEN,
+      );
+
+    // update post
     return await this.postsRepository.save({ ...postExist, ...post });
   }
 
-  async delete(id: number): Promise<{ statusCode: number; message: string }> {
-    if (!(await this.findOne(id)))
+  async delete(
+    id: number,
+    user: User,
+  ): Promise<{ statusCode: number; message: string }> {
+    // Verify if the post exists
+    const postExist = await this.findOne(id);
+    if (!postExist)
       throw new HttpException('Post not found', HttpStatus.NOT_FOUND);
 
+    // Verify if the user post is equal
+    if (user.id !== postExist.user.id)
+      throw new HttpException(
+        'You are not allowed to edit this post because you is not the owner.',
+        HttpStatus.FORBIDDEN,
+      );
+
+    // delete post
     return await this.postsRepository.delete(id).then(() => {
       return {
         statusCode: 204,

@@ -1,8 +1,45 @@
-import { CanActivate, ExecutionContext } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { jwtConstants } from '../constants.ts/constants';
+import { Request } from 'express';
 
-export class AuthJwtGuard implements CanActivate {
-  constructor() {}
+@Injectable()
+export class AuthJtwGuard implements CanActivate {
+  constructor(private jwtService: JwtService) {}
+
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context.switchToHttp().getRequest();
+    const token = this.extractTokenFromHeader(request);
+
+    if (!token) throw new UnauthorizedException();
+
+    try {
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: jwtConstants.secret,
+      });
+
+      request['user'] = payload;
+
+      if (context.switchToHttp().getRequest().method != 'GET')
+        request.body = {
+          ...request.body,
+          user: { ...request.body.user, id: payload.id },
+        };
+
+      console.log(request.body);
+    } catch (err) {
+      throw new UnauthorizedException();
+    }
     return true;
+  }
+
+  private extractTokenFromHeader(request: Request): string | undefined {
+    const [type, token] = request.headers.authorization?.split(' ') ?? [];
+    return type === 'Bearer' ? token : undefined;
   }
 }
