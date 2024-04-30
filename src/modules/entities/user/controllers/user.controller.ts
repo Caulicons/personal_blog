@@ -1,16 +1,20 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
   Param,
   Post,
   Put,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from '../services/user.service';
 import { User } from '../entities/user.entity';
 import { UpdateUserDto } from '../dto/user.update.dto';
+import { AuthJtwGuard } from '../../../security/auth/guards/auth.jwt.guard';
 
 @Controller('users')
 export class UserController {
@@ -24,11 +28,6 @@ export class UserController {
   ) {
     return this.userService.create(user);
   }
-
-  /*   @Post('login')
-  async login() {
-    return await this.userService.login();
-  } */
 
   @Get()
   @HttpCode(HttpStatus.OK)
@@ -51,7 +50,7 @@ export class UserController {
     @Param('username')
     username: string,
   ) {
-    return this.userService.findByUsername(username);
+    return await this.userService.findByUsername(username);
   }
 
   @Get('/email/:email')
@@ -60,15 +59,30 @@ export class UserController {
     @Param('email')
     email: string,
   ) {
-    return this.userService.findByEmail(email);
+    return await this.userService.findByEmail(email);
   }
 
+  @UseGuards(AuthJtwGuard)
   @Put()
   @HttpCode(HttpStatus.OK)
   async update(
     @Body()
     user: UpdateUserDto,
+    @Request()
+    req,
   ) {
-    return this.userService.update(user);
+    // because I don't pass the id from the body I need catch ID from req pass through the guard
+    const idUser = req.user.id;
+    return this.userService.update({ ...user, id: idUser });
+  }
+
+  @UseGuards(AuthJtwGuard)
+  @Delete()
+  @HttpCode(HttpStatus.OK)
+  async delete(
+    @Request()
+    req,
+  ) {
+    return await this.userService.delete(req.user);
   }
 }

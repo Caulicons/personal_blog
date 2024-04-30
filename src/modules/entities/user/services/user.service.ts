@@ -60,7 +60,11 @@ export class UserService {
 
   // Can be used only by login users
   async findByUsername(username: string): Promise<User> {
-    return await this.usersRepository.findOne({ where: { username } });
+    return await this.usersRepository.findOne({
+      where: {
+        username,
+      },
+    });
   }
 
   // Can be used only by login users
@@ -77,12 +81,12 @@ export class UserService {
 
     // Check email
     const userEmail = await this.findByEmail(userExists.email);
-    if (userEmail && userEmail.id !== user.id)
+    if (userEmail && userEmail.id !== userExists.id)
       throw new HttpException('Email already exists', HttpStatus.BAD_REQUEST);
 
     // Check username
     const userUsername = await this.findByUsername(userExists.username);
-    if (userUsername && userUsername.id != user.id)
+    if (userUsername && userUsername.id !== userExists.id)
       throw new HttpException(
         'Username already exists',
         HttpStatus.BAD_REQUEST,
@@ -94,5 +98,16 @@ export class UserService {
 
     // update user
     return await this.usersRepository.save({ ...userExists, ...user });
+  }
+
+  async delete(user: User): Promise<{ statusCode: number; message: string }> {
+    // Verify if the post exists
+    const userExist = await this.findOne(user.id);
+    if (!userExist)
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+
+    return await this.usersRepository.delete({ id: user.id }).then(() => {
+      return { statusCode: 200, message: 'User deleted' };
+    });
   }
 }

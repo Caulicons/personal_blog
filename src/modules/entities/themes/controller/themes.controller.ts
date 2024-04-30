@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { ThemesService } from '../services/themes.service';
 import { Theme } from '../entities/theme.entity';
-import { AuthJtwGuard } from '../../../security/auth/guards/auth.local.guard';
+import { AuthJtwGuard } from '../../../security/auth/guards/auth.jwt.guard';
 
 /* 
 TODO - Implement Themes Controller
@@ -21,6 +21,7 @@ TODO - Implement Themes Controller
 @Controller('themes')
 export class ThemesController {
   constructor(private readonly themesService: ThemesService) {}
+  @UseGuards(AuthJtwGuard)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(
@@ -52,6 +53,7 @@ export class ThemesController {
     return await this.themesService.findByName(name);
   }
 
+  @UseGuards(AuthJtwGuard)
   @Put(':id')
   async update(
     @Param('id')
@@ -62,6 +64,7 @@ export class ThemesController {
     return await this.themesService.update(id, theme);
   }
 
+  @UseGuards(AuthJtwGuard)
   @Delete(':id')
   async delete(
     @Param('id')

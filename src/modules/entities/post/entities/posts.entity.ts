@@ -46,7 +46,7 @@ export class Posts {
   @ManyToOne(() => Theme, (theme) => theme.posts, { onDelete: 'CASCADE' })
   theme: Theme;
 
-  @IsNotEmpty()
+  //@IsNotEmpty()
   @ValidateNested({ each: true })
   @Type(() => userDTO)
   @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })
