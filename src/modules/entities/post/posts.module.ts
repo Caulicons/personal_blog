@@ -3,8 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Posts } from './entities/posts.entity';
 import { PostsController } from './controllers/posts.controller';
 import { PostsService } from './services/posts.service';
-import { ThemesService } from 'src/themes/services/themes.service';
-import { ThemesModule } from 'src/themes/themes.module';
+import { ThemesService } from '../themes/services/themes.service';
+import { ThemesModule } from '../themes/themes.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Posts]), ThemesModule],

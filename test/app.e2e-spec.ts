@@ -2,23 +2,46 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
-describe('AppController (e2e)', () => {
+describe('Testes dos Módulos Usuário e Auth (e2e)', () => {
+  let token: any;
+  let usuarioId: any;
   let app: INestApplication;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [
+        TypeOrmModule.forRoot({
+          type: 'sqlite',
+          database: 'db_blogpessoal_test.db',
+          entities: [__dirname + './../src/**/entities/*.entity.ts'],
+          synchronize: true,
+          dropSchema: true,
+        }),
+        AppModule,
+      ],
     }).compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
   });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+  afterAll(async () => {
+    await app.close();
+  });
+
+  it('01 - Deve Cadastrar Usuario', async () => {
+    const resposta = await request(app.getHttpServer())
+      .post('/usuarios/cadastrar')
+      .send({
+        nome: 'Root',
+        usuario: 'root@root.com',
+        senha: 'rootroot',
+        foto: ' ',
+      });
+    expect(201);
+
+    usuarioId = resposta.body.id;
   });
 });

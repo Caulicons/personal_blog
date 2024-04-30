@@ -12,8 +12,6 @@ import {
 } from '@nestjs/common';
 import { PostsService } from '../services/posts.service';
 import { Posts } from '../entities/posts.entity';
-import { DeleteResult } from 'typeorm';
-
 @Controller('/posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
@@ -29,9 +27,8 @@ export class PostsController {
     id: number,
   ): Promise<Posts> {
     const post = await this.postsService.findOne(id);
-    if (!post) {
-      throw new HttpException('Post not found with id ' + id, 404);
-    }
+    if (!post) throw new HttpException('Post not found with id ' + id, 404);
+
     return post;
   }
 
@@ -42,7 +39,7 @@ export class PostsController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async createPost(
+  async create(
     @Body()
     post: Posts,
   ): Promise<Posts> {
@@ -50,17 +47,20 @@ export class PostsController {
   }
 
   @Put(':id')
-  async updatePost(
-    @Body()
-    post: Posts,
+  async update(
     @Param('id')
     id: number,
+    @Body()
+    post: Posts,
   ): Promise<Posts> {
     return this.postsService.update(id, post);
   }
 
+  @HttpCode(HttpStatus.OK)
   @Delete(':id')
-  async deletePost(@Param('id') id: number): Promise<DeleteResult> {
+  async delete(
+    @Param('id') id: number,
+  ): Promise<{ statusCode: number; message: string }> {
     return this.postsService.delete(id);
   }
 }

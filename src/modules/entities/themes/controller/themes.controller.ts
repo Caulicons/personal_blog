@@ -8,13 +8,16 @@ import {
   Put,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { ThemesService } from '../services/themes.service';
 import { Theme } from '../entities/theme.entity';
+import { AuthJtwGuard } from '../../../security/auth/guards/auth.local.guard';
 
 /* 
 TODO - Implement Themes Controller
 */
+@UseGuards(AuthJtwGuard)
 @Controller('themes')
 export class ThemesController {
   constructor(private readonly themesService: ThemesService) {}
