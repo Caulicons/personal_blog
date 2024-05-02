@@ -13,12 +13,15 @@ import {
 import { ThemesService } from '../services/themes.service';
 import { Theme } from '../entities/theme.entity';
 import { AuthJtwGuard } from '../../../security/auth/guards/auth.jwt.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 /* 
 TODO - Implement Themes Controller
 */
+@ApiTags('Theme')
 @UseGuards(AuthJtwGuard)
 @Controller('themes')
+@ApiBearerAuth()
 export class ThemesController {
   constructor(private readonly themesService: ThemesService) {}
   @UseGuards(AuthJtwGuard)

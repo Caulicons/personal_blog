@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { Theme } from '../../themes/entities/theme.entity';
 import { User } from '../../user/entities/user.entity';
+import { ApiProperty } from '@nestjs/swagger';
 
 class themeDTO {
   @IsNotEmpty()
@@ -23,23 +24,28 @@ class userDTO {
 
 @Entity('tb_posts')
 export class Posts {
+  @ApiProperty()
   @PrimaryGeneratedColumn('increment')
   readonly id: number;
 
+  @ApiProperty()
   @Column({ nullable: false })
   @Transform(({ value }) => value?.trim())
   @IsNotEmpty()
   @Length(3, 100)
   title: string;
 
+  @ApiProperty()
   @Column({ length: 2000, nullable: false })
   @Transform(({ value }) => value?.trim())
   @IsNotEmpty()
   content: string;
 
+  @ApiProperty()
   @UpdateDateColumn()
   data: Date;
 
+  @ApiProperty({ type: () => themeDTO })
   @IsNotEmpty()
   @ValidateNested({ each: true })
   @Type(() => themeDTO)
@@ -47,6 +53,7 @@ export class Posts {
   theme: Theme;
 
   //@IsNotEmpty()
+  @ApiProperty({ type: () => userDTO })
   @ValidateNested({ each: true })
   @Type(() => userDTO)
   @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })
