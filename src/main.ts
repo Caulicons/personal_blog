@@ -5,7 +5,6 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
-
   const config = new DocumentBuilder()
     .setTitle('Personal Blog')
     .setDescription('My Blog personal')
@@ -23,6 +22,6 @@ async function bootstrap() {
   process.env.TZ = '-03:00';
   app.useGlobalPipes(new ValidationPipe());
 
-  await app.listen(4000);
+  await app.listen(process.env.PORT || 4000);
 }
 bootstrap();

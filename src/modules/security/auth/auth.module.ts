@@ -4,14 +4,15 @@ import { AuthService } from './services/auth.service';
 import { Bcrypt } from './bcrypt/brypt';
 import { UserModule } from '../../entities/user/user.module';
 import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from './constants.ts/constants';
+import dotenv from 'dotenv';
+dotenv.config();
 
 @Module({
   imports: [
     UserModule,
     JwtModule.register({
       global: true,
-      secret: jwtConstants.secret,
+      secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '365d' },
       verifyOptions: { ignoreExpiration: false },
     }),
