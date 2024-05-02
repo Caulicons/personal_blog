@@ -5,12 +5,13 @@ import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 export class ProdService implements TypeOrmOptionsFactory {
   createTypeOrmOptions(): TypeOrmModuleOptions {
     return {
-      type: 'mysql',
-      host: process.env.MYSQLHOST,
-      port: parseInt(process.env.MYSQLPORT),
-      username: process.env.MYSQLUSER,
-      password: process.env.MYSQLPASSWORD,
-      database: process.env.MYSQLDATABASE,
+      type: 'postgres',
+      url: process.env.DATABASE_URL,
+      logging: false,
+      dropSchema: false,
+      ssl: {
+        rejectUnauthorized: false,
+      },
       synchronize: true,
       autoLoadEntities: true,
     };
