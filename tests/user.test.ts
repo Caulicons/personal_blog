@@ -12,9 +12,9 @@ describe('AppController', () => {
   const user = {
     username: 'romario',
     email: 'romario@romario.com',
-    password: 'romario123',
+    password: 'romario1994',
     photo:
-      'https://s2.glbimg.com/xaPAFYp26YTQxjVu59OFcNJMky8=/top/e.glbimg.com/og/ed/f/original/2021/02/18/romario-4.jpg',
+      'https://conteudo.imguol.com.br/c/esporte/a0/2020/04/27/romario-divide-com-luigi-apolloni-na-final-da-copa-do-mundo-de-1994-1588015433347_v2_1920x1280.jpg',
   };
 
   beforeEach(async () => {
@@ -22,7 +22,7 @@ describe('AppController', () => {
       imports: [
         TypeOrmModule.forRoot({
           type: 'sqlite',
-          database: 'db.sqlite',
+          database: ':memory:',
           synchronize: true,
           autoLoadEntities: true,
           dropSchema: true,
@@ -82,13 +82,13 @@ describe('AppController', () => {
         .set('Authorization', `${token}`)
         .send({
           id: userID,
-          username: user.username,
+          username: 'bebeto',
           email: user.email,
           password: user.password,
         })
         .expect(200)
         .then((res) => {
-          expect('Root Atualizado').toEqual(res.body.nome);
+          expect('Bebeto').toEqual(res.body.username);
         });
     });
   });
