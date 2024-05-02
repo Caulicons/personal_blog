@@ -50,7 +50,7 @@ export class User {
   })
   @IsOptional()
   @IsUrl()
-  foto: string;
+  photo: string;
 
   @OneToMany(() => Posts, (postagens) => postagens.user)
   posts: Posts[];
