@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { PostsService } from '../services/posts.service';
 import { Posts } from '../entities/posts.entity';
-import { AuthJtwGuard } from '../../../security/auth/guards/auth.jwt.guard';
+import { AuthJtwGuard } from '../../../security/authentication/guards/auth.jwt.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Post')

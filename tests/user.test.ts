@@ -59,7 +59,7 @@ describe('AppController', () => {
 
     test('03 - Authenticated user', async () => {
       const res = await request(app.getHttpServer())
-        .post('/auth/login')
+        .post('/authentication/login')
         .send({
           username: user.username,
           password: user.password,

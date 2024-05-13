@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PostsModule } from './modules/entities/post/posts.module';
 import { ThemesModule } from './modules/entities/themes/themes.module';
 import { UserModule } from './modules/entities/user/user.module';
-import { AuthModule } from './modules/security/auth/auth.module';
+import { AuthModule } from './modules/security/authentication/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { ProdService } from './data/services/prod.service';
 

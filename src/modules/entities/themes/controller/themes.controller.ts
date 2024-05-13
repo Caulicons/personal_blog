@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { ThemesService } from '../services/themes.service';
 import { Theme } from '../entities/theme.entity';
-import { AuthJtwGuard } from '../../../security/auth/guards/auth.jwt.guard';
+import { AuthJtwGuard } from '../../../security/authentication/guards/auth.jwt.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 /* 
