@@ -25,6 +25,7 @@ describe('AppController', () => {
           database: ':memory:',
           synchronize: true,
           autoLoadEntities: true,
+          //entities: [__dirname + './../src/**/entities/*.entity.ts'],
           dropSchema: true,
         }),
         AppModule,
