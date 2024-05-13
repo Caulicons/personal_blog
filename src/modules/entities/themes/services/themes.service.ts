@@ -11,6 +11,14 @@ export class ThemesService {
   ) {}
 
   async create(theme: Theme) {
+    const themeExist = await this.themesRepository.findOne({
+      where: {
+        name: theme.name,
+      },
+    });
+
+    if (themeExist) throw new HttpException('Theme already exists', 409);
+
     return this.themesRepository.save(theme);
   }
   async findAll() {
