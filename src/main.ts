@@ -6,14 +6,16 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
   const config = new DocumentBuilder()
-    .setTitle('Personal Blog')
-    .setDescription('My Blog personal')
-    .setContact(
-      'Vítor Oliveira. (@Caulicons)',
-      'https://github.com/Caulicons',
-      'caulicons.jobs@gmail.com',
+    .setTitle('My Blog')
+    .setDescription(
+      'My personal blog, made while attending the Generation BootCamp. (Making in the mood of the developer 💣)',
     )
-    .setVersion('0.0000000001')
+    .setContact(
+      'Vítor Oliveira. (@caulicons)',
+      'https://github.com/caulicons',
+      'https://www.linkedin.com/in/caulicons/',
+    )
+    .setVersion('0.000000001')
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
