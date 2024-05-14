@@ -4,6 +4,8 @@ import { Posts } from '../entities/posts.entity';
 import { ILike, Repository } from 'typeorm';
 import { ThemesService } from '../../themes/services/themes.service';
 import { User } from '../../user/entities/user.entity';
+import { PostCreateDTO } from '../dto/post.create.dto';
+import { PostUpdateDTO } from '../dto/post.update.dto';
 @Injectable()
 export class PostsService {
   constructor(
@@ -55,23 +57,29 @@ export class PostsService {
     return posts;
   }
 
-  async create(post: Posts): Promise<Posts> {
-    const themeExists = await this.themesService.findById(post.theme.id);
+  async create(post: PostCreateDTO): Promise<Posts> {
+    const themeExists = await this.themesService.findById(post.theme);
     if (!themeExists)
       throw new HttpException('Theme not found', HttpStatus.NOT_FOUND);
 
-    return await this.postsRepository.save(post);
+    console.log(post);
+    return await this.postsRepository.save({
+      ...post,
+      theme: { id: post.theme },
+      // The user id is passed through the AuthJwtGuard
+      user: { id: post.user.id },
+    });
   }
 
-  async update(id: number, post: Posts): Promise<Posts> {
+  async update(id: number, post: PostUpdateDTO): Promise<Posts> {
     //Check if the post exist
     const postExist = await this.findOne(id);
     if (!postExist)
       throw new HttpException('Post not found', HttpStatus.NOT_FOUND);
 
     // Check if the theme passed exist
-    if (post.theme?.id) {
-      const themeExists = await this.themesService.findById(post.theme.id);
+    if (post.theme) {
+      const themeExists = await this.themesService.findById(post.theme);
       if (!themeExists)
         throw new HttpException('Theme not found', HttpStatus.NOT_FOUND);
     }
@@ -84,13 +92,15 @@ export class PostsService {
       );
 
     // update post
-    return await this.postsRepository.save({ ...postExist, ...post });
+    return await this.postsRepository.save({
+      ...postExist,
+      ...post,
+      theme: { id: post.theme || postExist.theme.id },
+      // The user id is passed through the AuthJwtGuard
+    });
   }
 
-  async delete(
-    id: number,
-    user: User,
-  ): Promise<{ statusCode: number; message: string }> {
+  async delete(id: number, user: User) {
     // Verify if the post exists
     const postExist = await this.findOne(id);
     if (!postExist)
@@ -104,11 +114,6 @@ export class PostsService {
       );
 
     // delete post
-    return await this.postsRepository.delete(id).then(() => {
-      return {
-        statusCode: 204,
-        message: 'Post deleted successfully',
-      };
-    });
+    return await this.postsRepository.delete(id);
   }
 }

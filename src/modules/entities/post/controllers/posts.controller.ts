@@ -15,20 +15,30 @@ import {
 import { PostsService } from '../services/posts.service';
 import { Posts } from '../entities/posts.entity';
 import { AuthJtwGuard } from '../../../security/authentication/guards/auth.jwt.guard';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { PostCreateDTO } from '../dto/post.create.dto';
+import { PostUpdateDTO } from '../dto/post.update.dto';
 
 @ApiTags('Post')
 @Controller('/posts')
-@ApiBearerAuth()
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
+  @ApiResponse({
+    type: Posts,
+    isArray: true,
+  })
   @Get()
+  @HttpCode(HttpStatus.OK)
   async findAll(): Promise<Posts[]> {
     return this.postsService.findAll();
   }
 
+  @ApiResponse({
+    type: Posts,
+  })
   @Get(':id')
+  @HttpCode(HttpStatus.OK)
   async findOne(
     @Param('id') // ParseIntPipe is used to transform the id string into number
     id: number,
@@ -39,41 +49,49 @@ export class PostsController {
     return post;
   }
 
+  @ApiResponse({
+    type: Posts,
+    isArray: true,
+  })
+  // Return only one post or a list of posts
   @Get('/title/:title')
   async findByTitle(@Param('title') title: string): Promise<Posts[]> {
     return await this.postsService.findByTitle(title);
   }
 
+  @ApiBearerAuth()
   @UseGuards(AuthJtwGuard)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(
     @Body()
-    post: Posts,
+    post: PostCreateDTO,
   ): Promise<Posts> {
     return await this.postsService.create(post);
   }
 
+  @ApiBearerAuth()
   @UseGuards(AuthJtwGuard)
   @Put(':id')
   async update(
     @Param('id')
     id: number,
     @Body()
-    post: Posts,
+    post: PostUpdateDTO,
   ): Promise<Posts> {
     return this.postsService.update(id, post);
   }
 
+  @ApiBearerAuth()
   @UseGuards(AuthJtwGuard)
-  @HttpCode(HttpStatus.OK)
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   async delete(
     @Param('id') id: number,
     // The user id is passed through the AuthJwtGuard
     @Request()
     req,
-  ): Promise<{ statusCode: number; message: string }> {
+  ) {
     return this.postsService.delete(id, req.user);
   }
 }

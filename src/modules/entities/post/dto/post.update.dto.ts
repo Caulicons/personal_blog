@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { IsNotEmpty, IsNumber, Length } from 'class-validator';
 
-export class PostCreateDTO {
+export class PostUpdateDTO {
   @ApiProperty({
     type: String,
     required: true,
