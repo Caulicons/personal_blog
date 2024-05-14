@@ -14,17 +14,17 @@ import { ThemesService } from '../services/themes.service';
 import { Theme } from '../entities/theme.entity';
 import { AuthJtwGuard } from '../../../security/authentication/guards/auth.jwt.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Roles } from '../../../security/authorization/decorators/roles.decorator';
+import { Role } from '../../../security/authorization/enums/role.enum';
+import { RolesGuard } from '../../../security/authorization/guards/roles.guard';
 
-/* 
-TODO - Implement Themes Controller
-*/
 @ApiTags('Theme')
-@UseGuards(AuthJtwGuard)
 @Controller('themes')
 @ApiBearerAuth()
 export class ThemesController {
   constructor(private readonly themesService: ThemesService) {}
-  @UseGuards(AuthJtwGuard)
+  @Roles(Role.Admin)
+  @UseGuards(AuthJtwGuard, RolesGuard)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(

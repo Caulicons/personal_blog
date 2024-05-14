@@ -14,8 +14,11 @@ import {
 import { UserService } from '../services/user.service';
 import { User } from '../entities/user.entity';
 import { UpdateUserDto } from '../dto/user.update.dto';
-import { AuthJtwGuard } from '../../../security/authentication/guards/auth.jwt.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Roles } from '../../../security/authorization/decorators/roles.decorator';
+import { Role } from '../../../security/authorization/enums/role.enum';
+import { AuthJtwGuard } from '../../../security/authentication/guards/auth.jwt.guard';
+import { RolesGuard } from '../../../security/authorization/guards/roles.guard';
 
 @ApiTags('User')
 @Controller('users')
@@ -56,6 +59,8 @@ export class UserController {
     return await this.userService.findByUsername(username);
   }
 
+  @Roles(Role.Admin)
+  @UseGuards(AuthJtwGuard, RolesGuard)
   @Get('/email/:email')
   @HttpCode(HttpStatus.OK)
   async findByEmail(
