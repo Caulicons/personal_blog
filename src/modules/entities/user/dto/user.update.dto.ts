@@ -1,8 +1,6 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { User } from '../entities/user.entity';
-import { IsEmpty } from 'class-validator';
+import { PartialType } from '@nestjs/swagger';
+import { UserCreateDTO } from './user.create.dto';
 
-export class UpdateUserDto extends PartialType(User) {
-  @IsEmpty()
+export class UserUpdateDTO extends PartialType(UserCreateDTO) {
   id: number;
 }

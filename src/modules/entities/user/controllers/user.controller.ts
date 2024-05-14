@@ -13,16 +13,16 @@ import {
 } from '@nestjs/common';
 import { UserService } from '../services/user.service';
 import { User } from '../entities/user.entity';
-import { UpdateUserDto } from '../dto/user.update.dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { UserUpdateDTO } from '../dto/user.update.dto';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../../../security/authorization/decorators/roles.decorator';
 import { Role } from '../../../security/authorization/enums/role.enum';
 import { AuthJtwGuard } from '../../../security/authentication/guards/auth.jwt.guard';
 import { RolesGuard } from '../../../security/authorization/guards/roles.guard';
+import { UserCreateDTO } from '../dto/user.create.dto';
 
 @ApiTags('User')
 @Controller('users')
-@ApiBearerAuth()
 export class UserController {
   constructor(private userService: UserService) {}
 
@@ -30,17 +30,19 @@ export class UserController {
   @HttpCode(HttpStatus.CREATED)
   create(
     @Body()
-    user: User,
+    user: UserCreateDTO,
   ) {
     return this.userService.create(user);
   }
 
   @Get()
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({ type: User, isArray: true })
   async findAll() {
     return this.userService.findAll();
   }
 
+  @ApiResponse({ type: User })
   @Get('/:id')
   @HttpCode(HttpStatus.OK)
   async findOne(
@@ -50,6 +52,7 @@ export class UserController {
     return this.userService.findOne(id);
   }
 
+  @ApiResponse({ type: User })
   @Get('/username/:username')
   @HttpCode(HttpStatus.OK)
   async findByUsername(
@@ -59,6 +62,8 @@ export class UserController {
     return await this.userService.findByUsername(username);
   }
 
+  @ApiBearerAuth()
+  @ApiResponse({ type: User })
   @Roles(Role.Admin)
   @UseGuards(AuthJtwGuard, RolesGuard)
   @Get('/email/:email')
@@ -70,12 +75,14 @@ export class UserController {
     return await this.userService.findByEmail(email);
   }
 
+  @ApiBearerAuth()
+  @ApiResponse({ type: UserUpdateDTO })
   @UseGuards(AuthJtwGuard)
   @Put()
   @HttpCode(HttpStatus.OK)
   async update(
     @Body()
-    user: UpdateUserDto,
+    user: UserUpdateDTO,
     @Request()
     req,
   ) {
@@ -84,9 +91,10 @@ export class UserController {
     return this.userService.update({ ...user, id: idUser });
   }
 
+  @ApiBearerAuth()
   @UseGuards(AuthJtwGuard)
   @Delete()
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async delete(
     @Request()
     req,

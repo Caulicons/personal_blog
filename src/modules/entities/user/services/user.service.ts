@@ -3,7 +3,8 @@ import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Bcrypt } from '../../../security/authentication/bcrypt/brypt';
-import { UpdateUserDto } from '../dto/user.update.dto';
+import { UserUpdateDTO } from '../dto/user.update.dto';
+import { UserCreateDTO } from '../dto/user.create.dto';
 
 @Injectable()
 export class UserService {
@@ -13,7 +14,7 @@ export class UserService {
     private readonly BcryptServices: Bcrypt,
   ) {}
 
-  async create(user: User) {
+  async create(user: UserCreateDTO) {
     const usernameAlreadyExist = await this.usersRepository.findOne({
       where: { username: user.username },
     });
@@ -72,7 +73,7 @@ export class UserService {
     return await this.usersRepository.findOne({ where: { email } });
   }
 
-  async update(user: UpdateUserDto): Promise<User> {
+  async update(user: UserUpdateDTO): Promise<User> {
     const userExists = await this.usersRepository.findOne({
       where: { id: user.id },
     });
@@ -100,14 +101,12 @@ export class UserService {
     return await this.usersRepository.save({ ...userExists, ...user });
   }
 
-  async delete(user: User): Promise<{ statusCode: number; message: string }> {
+  async delete(user: User) {
     // Verify if the post exists
     const userExist = await this.findOne(user.id);
     if (!userExist)
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
 
-    return await this.usersRepository.delete({ id: user.id }).then(() => {
-      return { statusCode: 200, message: 'User deleted' };
-    });
+    return await this.usersRepository.delete({ id: user.id });
   }
 }
