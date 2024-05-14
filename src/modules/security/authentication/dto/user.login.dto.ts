@@ -5,12 +5,15 @@ import { IsEmail, IsNotEmpty, Length } from 'class-validator';
 export class UserLoginDto {
   @IsNotEmpty()
   @IsEmail()
-  @ApiProperty()
+  @ApiProperty({
+    example: 'root@root.com',
+    description: 'User email, only valid email is allowed',
+  })
   email: string;
 
   @Transform(({ value }: TransformFnParams) => value?.trim())
   @IsNotEmpty()
   @Length(6, 18)
-  @ApiProperty()
+  @ApiProperty({ minLength: 6, maxLength: 18, example: 'rootroot' })
   password: string;
 }

@@ -3,13 +3,12 @@ import {
   Controller,
   Get,
   HttpCode,
+  HttpException,
   HttpStatus,
   Post,
   Request,
-  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
-import { AuthJtwGuard } from '../guards/auth.jwt.guard';
 import { UserLoginDto } from '../dto/user.login.dto';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -27,9 +26,10 @@ export class AuthController {
     return await this.authService.login(user);
   }
 
-  @UseGuards(AuthJtwGuard)
   @Get('profile')
   getProfile(@Request() req) {
+    if (!req.user)
+      throw new HttpException('You are not logged in', HttpStatus.UNAUTHORIZED);
     return req.user;
   }
 }
