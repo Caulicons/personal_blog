@@ -13,32 +13,42 @@ import {
 import { ThemesService } from '../services/themes.service';
 import { Theme } from '../entities/theme.entity';
 import { AuthJtwGuard } from '../../../security/authentication/guards/auth.jwt.guard';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../../../security/authorization/decorators/roles.decorator';
 import { Role } from '../../../security/authorization/enums/role.enum';
 import { RolesGuard } from '../../../security/authorization/guards/roles.guard';
+import { ThemeCreateDTO } from '../dto/theme.create.dto';
+import { ThemeUpdateDTO } from '../dto/theme.update.dto';
 
 @ApiTags('Theme')
 @Controller('themes')
-@ApiBearerAuth()
 export class ThemesController {
   constructor(private readonly themesService: ThemesService) {}
+  @ApiBearerAuth()
   @Roles(Role.Admin)
   @UseGuards(AuthJtwGuard, RolesGuard)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(
     @Body()
-    theme: Theme,
+    theme: ThemeCreateDTO,
   ) {
     return this.themesService.create(theme);
   }
+
+  @ApiResponse({
+    type: [Theme],
+    description: 'Get all themes',
+  })
   @Get()
   @HttpCode(HttpStatus.OK)
   async findAll() {
     return this.themesService.findAll();
   }
 
+  @ApiResponse({
+    type: Theme,
+  })
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   async findById(
@@ -47,6 +57,10 @@ export class ThemesController {
   ): Promise<Theme> {
     return this.themesService.findById(id);
   }
+
+  @ApiResponse({
+    type: Theme,
+  })
   @Get('/name/:name')
   @HttpCode(HttpStatus.OK)
   async findByName(
@@ -56,23 +70,28 @@ export class ThemesController {
     return await this.themesService.findByName(name);
   }
 
-  @UseGuards(AuthJtwGuard)
+  @ApiBearerAuth()
+  @Roles(Role.Admin)
+  @UseGuards(AuthJtwGuard, RolesGuard)
   @Put(':id')
   async update(
     @Param('id')
     id: number,
     @Body()
-    theme: Theme,
+    theme: ThemeUpdateDTO,
   ) {
     return await this.themesService.update(id, theme);
   }
 
-  @UseGuards(AuthJtwGuard)
+  @ApiBearerAuth()
+  @Roles(Role.Admin)
+  @UseGuards(AuthJtwGuard, RolesGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
   async delete(
     @Param('id')
     id: number,
-  ): Promise<Theme> {
+  ) {
     return await this.themesService.delete(id);
   }
 }

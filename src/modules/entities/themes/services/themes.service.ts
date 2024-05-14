@@ -2,6 +2,8 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { ILike, Repository } from 'typeorm';
 import { Theme } from '../entities/theme.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ThemeCreateDTO } from '../dto/theme.create.dto';
+import { ThemeUpdateDTO } from '../dto/theme.update.dto';
 
 @Injectable()
 export class ThemesService {
@@ -10,7 +12,7 @@ export class ThemesService {
     private readonly themesRepository: Repository<Theme>,
   ) {}
 
-  async create(theme: Theme) {
+  async create(theme: ThemeCreateDTO) {
     const themeExist = await this.themesRepository.findOne({
       where: {
         name: theme.name,
@@ -18,7 +20,6 @@ export class ThemesService {
     });
 
     if (themeExist) throw new HttpException('Theme already exists', 409);
-
     return this.themesRepository.save(theme);
   }
   async findAll() {
@@ -45,7 +46,7 @@ export class ThemesService {
   }
 
   async findByName(name: string): Promise<Theme[]> {
-    const posts = await this.themesRepository.find({
+    const theme = await this.themesRepository.find({
       where: {
         name: ILike(`%${name}%`),
       },
@@ -54,25 +55,27 @@ export class ThemesService {
       },
     });
 
-    if (!posts.length)
+    if (!theme.length)
       throw new HttpException(`Theme with name ${name} not found`, 404);
 
-    return posts;
+    return theme;
   }
 
-  async update(id: number, theme: Theme): Promise<Theme> {
+  async update(id: number, theme: ThemeUpdateDTO): Promise<Theme> {
     const themeExist = await this.findById(id);
 
     if (!themeExist) throw new HttpException('Theme not found', 404);
-
+    console.log(theme);
     return this.themesRepository.save({ ...themeExist, ...theme });
   }
 
-  async delete(id: number): Promise<Theme> {
+  async delete(id: number) {
     const themeExist = await this.findById(id);
 
+    // Verify if the post exists
     if (!themeExist) throw new HttpException('Theme not found', 404);
 
-    return this.themesRepository.remove(themeExist);
+    // delete post
+    return await this.themesRepository.remove(themeExist);
   }
 }

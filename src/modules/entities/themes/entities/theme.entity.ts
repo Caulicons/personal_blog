@@ -14,7 +14,7 @@ export class Theme {
   @ApiProperty()
   name: string;
 
-  @ApiProperty()
+  @ApiProperty({ type: () => Posts })
   @OneToMany(() => Posts, (posts) => posts.theme)
   posts: Posts[];
 }
