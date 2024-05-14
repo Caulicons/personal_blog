@@ -13,9 +13,9 @@ async function bootstrap() {
     .setContact(
       'Vítor Oliveira. (@caulicons)',
       'https://github.com/caulicons',
-      'https://www.linkedin.com/in/caulicons/',
+      'caulicons.jobs@gmail.com',
     )
-    .setVersion('0.000000001')
+    .setVersion('0.00000001')
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
