@@ -7,10 +7,12 @@ import {
   HttpStatus,
   Post,
   Request,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { UserLoginDto } from '../dto/user.login.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { AuthJtwGuard } from '../guards/auth.jwt.guard';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -26,6 +28,8 @@ export class AuthController {
     return await this.authService.login(user);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(AuthJtwGuard)
   @Get('profile')
   getProfile(@Request() req) {
     if (!req.user)
