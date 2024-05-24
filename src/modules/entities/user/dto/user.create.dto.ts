@@ -58,7 +58,6 @@ export class UserCreateDTO {
   type: string;
 
   @IsOptional()
-  @IsUrl()
   @ApiProperty({
     required: false,
     description: 'User photo, must be a valid url',
