@@ -13,8 +13,11 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async login(userInput: UserLoginDto): Promise<{ access_token: string }> {
-    const user = await this.valideUser(userInput);
+  async login(
+    userInput: UserLoginDto,
+  ): Promise<Omit<User, 'password'> & { access_token: string }> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...user } = await this.valideUser(userInput);
 
     const payload = {
       id: user.id,
@@ -23,7 +26,8 @@ export class AuthService {
     };
 
     return {
-      access_token: `Bearer ${this.jwtService.sign(payload)}`,
+      ...user,
+      access_token: this.jwtService.sign(payload),
     };
   }
 
@@ -39,5 +43,12 @@ export class AuthService {
       throw new HttpException('Invalid password', HttpStatus.UNAUTHORIZED);
 
     return user;
+  }
+
+  async profile(id: number) {
+    if (!id)
+      throw new HttpException('You are not logged in', HttpStatus.UNAUTHORIZED);
+
+    return await this.userService.findOne(id);
   }
 }

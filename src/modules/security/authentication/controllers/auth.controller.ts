@@ -32,8 +32,6 @@ export class AuthController {
   @UseGuards(AuthJtwGuard)
   @Get('profile')
   getProfile(@Request() req) {
-    if (!req.user)
-      throw new HttpException('You are not logged in', HttpStatus.UNAUTHORIZED);
-    return req.user;
+    return this.authService.profile(req.user.id);
   }
 }
