@@ -7,6 +7,7 @@ import {
   HttpException,
   HttpStatus,
   Param,
+  ParseIntPipe,
   Post,
   Put,
   Request,
@@ -40,7 +41,7 @@ export class PostsController {
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   async findOne(
-    @Param('id') // ParseIntPipe is used to transform the id string into number
+    @Param('id', ParseIntPipe) // ParseIntPipe is used to transform the id string into number
     id: number,
   ): Promise<Posts> {
     const post = await this.postsService.findOne(id);

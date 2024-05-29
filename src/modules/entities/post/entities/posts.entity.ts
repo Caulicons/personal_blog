@@ -1,5 +1,11 @@
 import { Transform, Type } from 'class-transformer';
-import { IsNotEmpty, IsNumber, Length, ValidateNested } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  Length,
+  ValidateNested,
+} from 'class-validator';
 import {
   Column,
   Entity,
@@ -36,7 +42,7 @@ export class Posts {
   title: string;
 
   @ApiProperty()
-  @Column({ length: 2000, nullable: false })
+  @Column({ nullable: false })
   @Transform(({ value }) => value?.trim())
   @IsNotEmpty()
   content: string;
@@ -45,6 +51,12 @@ export class Posts {
   @UpdateDateColumn()
   data: Date;
 
+  @ApiProperty()
+  @Column({ nullable: true })
+  @Transform(({ value }) => value?.trim())
+  @IsOptional()
+  photo: string;
+
   @ApiProperty({ type: () => themeDTO })
   @IsNotEmpty()
   @ValidateNested({ each: true })
@@ -52,7 +64,7 @@ export class Posts {
   @ManyToOne(() => Theme, (theme) => theme.posts, { onDelete: 'CASCADE' })
   theme: Theme;
 
-  //@IsNotEmpty()
+  @IsNotEmpty()
   @ApiProperty({ type: () => userDTO })
   @ValidateNested({ each: true })
   @Type(() => userDTO)

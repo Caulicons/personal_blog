@@ -62,7 +62,6 @@ export class PostsService {
     if (!themeExists)
       throw new HttpException('Theme not found', HttpStatus.NOT_FOUND);
 
-    console.log(post);
     return await this.postsRepository.save({
       ...post,
       theme: { id: post.theme },

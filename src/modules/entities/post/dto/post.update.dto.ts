@@ -26,6 +26,13 @@ export class PostUpdateDTO {
   @IsNotEmpty()
   content: string;
 
+  @ApiProperty({
+    type: String,
+    example:
+      'https://t4.ftcdn.net/jpg/07/74/39/45/360_F_774394531_QY2821i8ctKVhsLvO9RxcBmHMsQylmcO.jpg',
+  })
+  photo: string;
+
   @ApiProperty({ type: Number, required: true })
   @IsNotEmpty()
   @IsNumber()

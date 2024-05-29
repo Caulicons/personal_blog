@@ -65,7 +65,6 @@ export class ThemesService {
     const themeExist = await this.findById(id);
 
     if (!themeExist) throw new HttpException('Theme not found', 404);
-    console.log(theme);
     return this.themesRepository.save({ ...themeExist, ...theme });
   }
 
